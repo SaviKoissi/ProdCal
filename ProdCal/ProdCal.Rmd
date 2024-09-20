@@ -1,0 +1,102 @@
+---
+title: "Manihot Production Process and Calculator Development"
+author: "Koissi Savi"
+date: "2024-09-19"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Direct approach
+
+### 1. Initial Vegetal Material and Plant Production
+
+* We start with an initial amount of vegetal material, denoted as 
+$𝑥$.
+* After 6 months, each unit of vegetal material produces 1 plant. However, due to a 50% survival rate, the total number of plants after this period will be:
+
+$$\text{Plants after 6 months}=𝑥\times 0.5$$
+
+### 2. Explant Production
+
+* Each juvenile plant produces 4 explants every 2 months, and the survival rate at this stage is 70%.
+* The number of explants produced every 2 months will be:
+
+$$\text{Explants after 2 months} = (x \times 0.5) \times 4 \times 0.7$$ 
+* The total number of explants at each stage will depend on the previous cycle’s output:
+
+$$\text{Explants after n cycle} = (x \times 0.5) \times (4 \times 0.7)^n$$ 
+* The total number of explants at each stage will depend on the previous cycle’s and the time for $n$ cycle output:
+
+$$\text{Explants after }  \tau \text{ time} = (x \times 0.5) \times (4 \times 0.7)^\tau$$ 
+with $\tau = n\times 2$ in month. This computation of the time does not account the initial period $\gamma = 6 \text{ months}$ and the acclimation period $\alpha = 2 \text{ months}$
+
+* This process continues in cycles. Each cycle, the explants will again multiply, and you can calculate their growth recursively.
+
+### 3. Bottling Process
+
+* Explants are transferred into bottles, with each bottle holding 10 explants.
+* The number of bottles required at any given cycle is:
+
+$$\text{Bottles required} = \frac{\text{Total explants at that stage}}{10}$$
+
+
+### 4. Technician Workload
+
+* Each technician can process between 30 and 100 bottles per day. If they work 5 days a week and 20 days a month, the number of bottles a technician can handle in a month is:
+
+$$\text{Bottles processed per technician per month}=(\text{30 to 100 bottles per day}) \times 5 \times 20 $$ 
+
+* To determine the total number of technicians needed, divide the total number of bottles by the processing capacity of each technician.
+
+### 5. Storage Room Capacity
+
+* The storage room has a capacity of 36,000 bottles. You’ll need to ensure that the total number of bottles doesn’t exceed this limit at any point in the process.
+* If the number of bottles exceeds this capacity, production will need to be slowed down, or additional storage will be required.
+
+### 6. Acclimatization and Field Transfer
+
+* After storage, the explants or plants are transferred to acclimation, where they stay for 2 months. The survival rate at this stage is unknown, but after acclimatization, the survival rate for field planting is 85%.
+* The number of plants available for planting will be:
+
+$$\text{Plants for planting} =   \text{Plants after acclimation} \times 0.85  \Leftrightarrow  0.85 \times (x \times 0.5) \times (4 \times 0.7)^n $$
+
+### 7. Planting Area and Time
+
+* Based on the desired planting area, you can estimate the total number of plants needed. The time required for production depends on the cycle time (6 months for the first stage and 2 months for subsequent cycles).
+
+### 8. Scenario: When to Hire Additional Technicians
+
+* If the number of plants exceeds the capacity of current technicians, more technicians must be hired. This can be determined when the number of bottles exceeds 10,000 per month (assuming 2 technicians).
+
+## Bayesian Approach
+
+### 1. Set Prior Distributions
+
+* Since some factors in the process are uncertain, such as survival rates during acclimatization and technician productivity, a Bayesian approach can model this uncertainty. We define the following prior distributions:
+
+* Survival rate during acclimatization:
+Let’s assume a prior distribution for the survival rate, modeled as 
+$Beta(2,2)$, reflecting uncertainty but centered around 50%.
+
+* Technician productivity:
+Model the productivity as 
+$Uniform(30,100)$ bottles per day, reflecting variability.
+
+### 2. Likelihood Function
+
+* We collect data from real production cycles on survival rates and technician productivity. This data will update the prior distributions, leading to better estimates. 
+
+* For each new set of observations, the likelihood function updates the probability of the parameters.
+
+### 3. Posterior Distribution
+
+* After collecting and incorporating new data, we obtain posterior distributions for survival rates and technician productivity. These will be used to refine our predictions and decision-making.
+
+### 4. Monte Carlo Simulation
+
+We can run Monte Carlo simulations based on the posterior distributions to predict the number of plants produced over time, bottleneck occurrences, and the need for additional technicians. This method accounts for uncertainty and variability in the system.
