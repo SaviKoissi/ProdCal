@@ -8,7 +8,7 @@ library(ggplot2)
 library(dplyr)
 
 # Set initial parameters for the production process
-x <- 100  # initial vegetal material
+x <- 10  # initial vegetal material
 n_cycles <- 10  # number of cycles to simulate
 months_per_cycle <- 2  # length of each cycle in months
 gamma <- 6  # initial production period in months
@@ -28,9 +28,11 @@ technician_productivity_prior <- function() {
 # Likelihood function for updating priors (dummy data for illustration)
 update_likelihood <- function(survival_data, productivity_data) {
   # Assume survival data and productivity data are given as observations
-  survival_updated <- rbeta(1, 2 + sum(survival_data), 2 + length(survival_data) - sum(survival_data))
+  survival_updated <- rbeta(1, 2 + sum(survival_data), 2 + 
+                              length(survival_data) - sum(survival_data))
   productivity_updated <- runif(1, min(productivity_data), max(productivity_data))
-  return(list(survival_updated = survival_updated, productivity_updated = productivity_updated))
+  return(list(survival_updated = survival_updated, 
+              productivity_updated = productivity_updated))
 }
 
 # Simulate the production process with Bayesian updates

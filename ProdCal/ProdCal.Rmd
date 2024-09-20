@@ -49,7 +49,7 @@ $$\text{Bottles required} = \frac{\text{Total explants at that stage}}{10}$$
 
 * Each technician can process between 30 and 100 bottles per day. If they work 5 days a week and 20 days a month, the number of bottles a technician can handle in a month is:
 
-$$\text{Bottles processed per technician per month}=(\text{30 to 100 bottles per day}) \times 5 \times 20 $$ 
+$$\text{Bottles processed per technician per month}=(\text{30 to 100 bottles per day}) \times 20 $$ 
 
 * To determine the total number of technicians needed, divide the total number of bottles by the processing capacity of each technician.
 
