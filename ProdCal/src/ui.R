@@ -1,4 +1,3 @@
-# ui.R
 library(shiny)
 
 shinyUI(fluidPage(
@@ -25,7 +24,7 @@ shinyUI(fluidPage(
   
   # Header with logo
   div(class = "header", 
-      #img(src = "www/logo.png", alt = "Logo"),  # Ensure the path to your logo is correct
+      img(src = "www/logo.png", alt = "Logo"),  # Relative path to the logo
       titlePanel("Crop Production Simulation Tool")  # Updated app name
   ),
   
