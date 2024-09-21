@@ -8,16 +8,26 @@ library(ggplot2)
 library(dplyr)
 
 # Set initial parameters for the production process
-x <- 10  # initial vegetal material
+x <- 100  # initial vegetal material
 n_cycles <- 10  # number of cycles to simulate
 months_per_cycle <- 2  # length of each cycle in months
 gamma <- 6  # initial production period in months
 alpha <- 2  # acclimation period in months
 
 # Define prior distributions for uncertain parameters
+regeneration_rate_prior <- function() {
+  # Uniform distribution for regeneration rate (50% to 80%)
+  runif(1, 0.5, 0.8)
+}
+
+survival_explant_prior <- function() {
+  # Uniform distribution for explant survival rate (70% to 100%)
+  runif(1, 0.7, 1)
+}
+
 survival_acclimatization_prior <- function() {
-  # Beta distribution centered around 50% survival rate
-  rbeta(1, 2, 2)
+  # Uniform distribution for acclimatization survival rate (90% to 100%)
+  runif(1, 0.9, 1)
 }
 
 technician_productivity_prior <- function() {
@@ -28,11 +38,9 @@ technician_productivity_prior <- function() {
 # Likelihood function for updating priors (dummy data for illustration)
 update_likelihood <- function(survival_data, productivity_data) {
   # Assume survival data and productivity data are given as observations
-  survival_updated <- rbeta(1, 2 + sum(survival_data), 2 + 
-                              length(survival_data) - sum(survival_data))
+  survival_updated <- rbeta(1, 2 + sum(survival_data), 2 + length(survival_data) - sum(survival_data))
   productivity_updated <- runif(1, min(productivity_data), max(productivity_data))
-  return(list(survival_updated = survival_updated, 
-              productivity_updated = productivity_updated))
+  return(list(survival_updated = survival_updated, productivity_updated = productivity_updated))
 }
 
 # Simulate the production process with Bayesian updates
@@ -41,11 +49,13 @@ monte_carlo_simulation <- function(x, n_cycles, months_per_cycle, gamma, alpha) 
   
   for (cycle in 1:n_cycles) {
     # Bayesian updating for survival and productivity at each cycle
-    survival_rate <- survival_acclimatization_prior()
+    regeneration_rate <- regeneration_rate_prior()
+    survival_explant_rate <- survival_explant_prior()
+    survival_acclimatization_rate <- survival_acclimatization_prior()
     productivity <- technician_productivity_prior()
     
-    # Explant production after each cycle (exponential growth)
-    explants_after_n <- x * 0.5 * (4 * 0.7)^(cycle)
+    # Explant production after each cycle (with varying survival rates)
+    explants_after_n <- x * regeneration_rate * (4 * survival_explant_rate)^(cycle)
     
     # Bottles required at each cycle
     bottles_required <- explants_after_n / 10
@@ -60,7 +70,9 @@ monte_carlo_simulation <- function(x, n_cycles, months_per_cycle, gamma, alpha) 
       explants_after_n = explants_after_n,
       bottles_required = bottles_required,
       technicians_needed = technicians_needed,
-      survival_rate = survival_rate
+      regeneration_rate = regeneration_rate,
+      survival_explant_rate = survival_explant_rate,
+      survival_acclimatization_rate = survival_acclimatization_rate
     )
   }
   
@@ -83,4 +95,3 @@ ggplot(results_df, aes(x = cycle)) +
        x = "Cycle",
        y = "Count") +
   theme_minimal()
-

@@ -17,22 +17,22 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * We start with an initial amount of vegetal material, denoted as 
 $𝑥$.
-* After 6 months, each unit of vegetal material produces 1 plant. However, due to a 50% survival rate, the total number of plants after this period will be:
+* After 6 months, each unit of vegetal material produces 1 plant. The regeneration rate $r$ varies from 50% to 80% , the total number of plants after this period will be:
 
-$$\text{Plants after 6 months}=𝑥\times 0.5$$
-
+$$\text{Plants after 6 months}=𝑥\times r$$
+where $0.5 \leq r \leq 0.8$
 ### 2. Explant Production
 
-* Each juvenile plant produces 4 explants every 2 months, and the survival rate at this stage is 70%.
+* Each juvenile plant produces 4 explants every 2 months, and the survival rate $s$ during this stage varie from 70% to 100%.
 * The number of explants produced every 2 months will be:
 
-$$\text{Explants after 2 months} = (x \times 0.5) \times 4 \times 0.7$$ 
+$$\text{Explants after 2 months} = (x \times r) \times 4 \times s$$ 
 * The total number of explants at each stage will depend on the previous cycle’s output:
 
-$$\text{Explants after n cycle} = (x \times 0.5) \times (4 \times 0.7)^n$$ 
+$$\text{Explants after n cycle} = (x \times r) \times (4 \times s)^n$$ 
 * The total number of explants at each stage will depend on the previous cycle’s and the time for $n$ cycle output:
 
-$$\text{Explants after }  \tau \text{ time} = (x \times 0.5) \times (4 \times 0.7)^\tau$$ 
+$$\text{Explants after }  \tau \text{ time} = (x \times r) \times (4 \times s)^\tau$$ 
 with $\tau = n\times 2$ in month. This computation of the time does not account the initial period $\gamma = 6 \text{ months}$ and the acclimation period $\alpha = 2 \text{ months}$
 
 * This process continues in cycles. Each cycle, the explants will again multiply, and you can calculate their growth recursively.
@@ -60,10 +60,10 @@ $$\text{Bottles processed per technician per month}=(\text{30 to 100 bottles per
 
 ### 6. Acclimatization and Field Transfer
 
-* After storage, the explants or plants are transferred to acclimation, where they stay for 2 months. The survival rate at this stage is unknown, but after acclimatization, the survival rate for field planting is 85%.
+* After storage, the explants or plants are transferred to acclimatization, where they stay for 2 months. The survival rate $s_a$ varie from 85% to 100%, but after acclimatization, the survival rate for field planting $s_f$varied from 90%  to 100%.
 * The number of plants available for planting will be:
 
-$$\text{Plants for planting} =   \text{Plants after acclimation} \times 0.85  \Leftrightarrow  0.85 \times (x \times 0.5) \times (4 \times 0.7)^n $$
+$$\text{Plants for planting} =   \text{Plants after acclimatization} \times s_a \times s_f  \Leftrightarrow  s_a \times s_f \times (x \times r) \times (4 \times s)^n $$
 
 ### 7. Planting Area and Time
 
@@ -77,15 +77,18 @@ $$\text{Plants for planting} =   \text{Plants after acclimation} \times 0.85  \L
 
 ### 1. Set Prior Distributions
 
-* Since some factors in the process are uncertain, such as survival rates during acclimatization and technician productivity, a Bayesian approach can model this uncertainty. We define the following prior distributions:
+* Given the uncertainty in the production process, we define the following prior distributions:
 
-* Survival rate during acclimatization:
-Let’s assume a prior distribution for the survival rate, modeled as 
-$Beta(2,2)$, reflecting uncertainty but centered around 50%.
+* Regeneration Rate: Model the regeneration rate 
+$r$ as a $Uniform(0.5,0.8)$.
 
-* Technician productivity:
-Model the productivity as 
-$Uniform(30,100)$ bottles per day, reflecting variability.
+* Survival Rate for Explants: Model this survival rate $s$ as a $Uniform(0.7,1)$.
+
+* Survival Rate During Acclimatization: Model this as a $Uniform(0.85,1)$ for acclimatization survival $s_a$ and 
+$Uniform(0.9,1)$ for field survival $s_f$.
+
+Technician Productivity: Model the productivity as $Uniform(30,100)$ bottles per day.
+
 
 ### 2. Likelihood Function
 
