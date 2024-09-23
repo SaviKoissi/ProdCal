@@ -2,7 +2,7 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
-source("BayProdCal.R")  # Load your production calculation functions
+source("src/BayProdCal.R")  # Load your production calculation functions
 
 shinyServer(function(input, output) {
   
@@ -18,7 +18,7 @@ shinyServer(function(input, output) {
     # Summarize results by cycle
     summary_results <- results_df %>%
       group_by(cycle) %>%
-      summarise(
+      reframe(
         mean_explants = mean(explants_after_n),
         sd_explants = sd(explants_after_n),
         mean_bottles = mean(bottles_required),

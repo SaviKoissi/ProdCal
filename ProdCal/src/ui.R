@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyWidgets)
 
 shinyUI(fluidPage(
   
@@ -24,10 +25,19 @@ shinyUI(fluidPage(
   
   # Header with logo
   div(class = "header", 
-      img(src = "www/logo.png", alt = "Logo"),  # Relative path to the logo
+      img(src = "logo.png", alt = "Logo", style="float:right"),  # Relative path to the logo
       titlePanel("Crop Production Simulation Tool")  # Updated app name
   ),
+  #setBackgroundImage(
+   # src = "https://jgi.doe.gov/wp-content/uploads/2016/04/w1-IMG_7757_Prochnik.jpg"
+ # ),
   
+  
+  hr(style = "border-top: 1px solid #000000;"),
+  tags$script(src = 'https://www.googletagmanager.com/gtag/js?id=G-VGTSCPCLQQ', async = ""
+  ), 
+  tags$script(src = "static/js/gtag.js"), 
+    
   sidebarLayout(
     sidebarPanel(
       textInput("crop_name", "Crop Name:", value = "Manihot"),  # Allow users to enter the crop name
