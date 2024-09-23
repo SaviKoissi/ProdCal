@@ -3,8 +3,8 @@
 library(shiny)
 
 # Load the UI and server code
-source("src/ui.R")
-source("src/server.R")
+source("ui.R")
+source("server.R")
 
 # Launch the Shiny app
 shinyApp(ui = ui, server = server, options = list(launch.browser = TRUE))
