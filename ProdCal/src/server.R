@@ -2,7 +2,7 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
-source("src/BayProdCal.R")  # Load your production calculation functions
+source("BayProdCal.R")  # Load your production calculation functions
 
 shinyServer(function(input, output) {
   
