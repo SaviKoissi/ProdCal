@@ -20,10 +20,10 @@ save_log <- function(inputs, summary_results) {
   )
   
   # Append to CSV
-  if (!file.exists("data/sim_log.csv")) {
-    write.csv(log_entry, "data/sim_log.csv", row.names = FALSE)
+  if (!file.exists("https://github.com/SaviKoissi/ProdCal/edit/main/src/sim_log.csv")) {
+    write.csv(log_entry, "https://github.com/SaviKoissi/ProdCal/edit/main/src/sim_log.csv", row.names = FALSE)
   } else {
-    write.table(log_entry, "data/sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+    write.table(log_entry, "https://github.com/SaviKoissi/ProdCal/edit/main/src/sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
   }
 }
 
