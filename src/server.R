@@ -65,6 +65,8 @@ save_log <- function(inputs, summary_results) {
 github_token <- "JpEr/9qugl/jJBCul6pgsHa/6//pmBRu12vL5tSEXUA merveillekoissi.savi@gmail.com"  
 github_repo <- "SaviKoissi/ProdCal" 
 github_branch <- "main"  
+upload_to_github(file_path, github_repo, github_branch, github_token, "Update simulation log")
+
 server <- shinyServer(function(input, output) {
   
   observeEvent(input$calculate, {
