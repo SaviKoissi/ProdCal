@@ -28,7 +28,7 @@ upload_to_github <- function(file_path, repo, branch, token, message = "Update s
   # Send the PUT request to GitHub API
   res <- PUT(
     url,
-    add_headers(Authorization = paste("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", token)),
+    #add_headers(Authorization = paste("", token)),
     body = toJSON(body, auto_unbox = TRUE),
     encode = "json"
   )
