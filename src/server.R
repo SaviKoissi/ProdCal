@@ -9,7 +9,7 @@ source("src/BayProdCal.R")  # Load your production calculation functions
 
 # Function to upload file to GitHub via API
 upload_to_github <- function(file_path, repo, branch, token, message = "Update simulation log") {
-  url <- paste0("https://github.com/SaviKoissi/ProdCal", repo, "/contents/", file_path)
+  url <- paste0("https://github.com/SaviKoissi/ProdCal", repo, "/contents/", file_path=src)
   
   # Read the file content and encode it in base64
   content <- base64enc::base64encode(file_path)
