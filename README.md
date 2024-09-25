@@ -2,5 +2,5 @@ This Shiny app is designed to estimate the number of seedlings, the time require
 To run the app, use the following command:
 
 ```r
-runGitHub("ProdCal", "SaviKoissi", ref="main")
+runGitHub("ProdCal", "SaviKoissi")
 ```
