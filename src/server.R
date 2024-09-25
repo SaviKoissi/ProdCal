@@ -4,12 +4,16 @@ library(ggplot2)
 library(dplyr)
 library(httr)
 library(jsonlite)
+library(promises)    # Added for async operations
+library(future)      # Added for async operations
+
+plan(multisession)   # Set up asynchronous processing
 
 source("src/BayProdCal.R")  # Load your production calculation functions
 
 # Function to upload file to GitHub via API
 upload_to_github <- function(file_path, repo, branch, token, message = "Update simulation log") {
-  url <- paste0("https://github.com/SaviKoissi/ProdCal", repo, "/contents/", file_path)
+  url <- paste0("https://github.com/SaviKoissi", repo, "/ProdCal/", file_path)
   
   # Read the file content and encode it in base64
   content <- base64enc::base64encode(file_path)
@@ -17,14 +21,14 @@ upload_to_github <- function(file_path, repo, branch, token, message = "Update s
   # Prepare the body for the API request
   body <- list(
     message = message,
-    content = content,
+    content = ProdCal,
     branch = branch
   )
   
   # Send the PUT request to GitHub API
   res <- PUT(
     url,
-    add_headers(Authorization = paste("token", token)),
+    add_headers(Authorization = paste("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", token)),
     body = toJSON(body, auto_unbox = TRUE),
     encode = "json"
   )
@@ -37,9 +41,7 @@ upload_to_github <- function(file_path, repo, branch, token, message = "Update s
   }
 }
 
-
 # Function to save log entries to CSV
-
 save_log <- function(inputs, summary_results) {
   log_entry <- data.frame(
     timestamp = Sys.time(),
@@ -61,11 +63,16 @@ save_log <- function(inputs, summary_results) {
   }
 }
 
-# Upload the CSV file to GitHub
-github_token <- "JpEr/9qugl/jJBCul6pgsHa/6//pmBRu12vL5tSEXUA merveillekoissi.savi@gmail.com"  
-github_repo <- "SaviKoissi/ProdCal" 
-github_branch <- "main"  
-#upload_to_github(file_path, github_repo, github_branch, github_token, "Update simulation log")
+# Upload the CSV file to GitHub asynchronously
+upload_to_github_async <- function(file_path, repo, branch, token) {
+  future({
+    upload_to_github(file_path, repo, branch, token)
+  })
+}
+
+github_token <- "JpEr/9qugl/jJBCul6pgsHa/6//pmBRu12vL5tSEXUA merveillekoissi.savi@gmail.com"
+github_repo <- "SaviKoissi/ProdCal"
+github_branch <- "main"
 
 server <- shinyServer(function(input, output) {
   
@@ -88,16 +95,16 @@ server <- shinyServer(function(input, output) {
         sd_bottles = sd(bottles_required),
         mean_technicians = mean(technicians_needed),
         sd_technicians = sd(technicians_needed),
-        # Calculate Time T for each cycle
         time_T = 6 + cycle * 2 + 2
       ) %>%
-      distinct()  # Remove any duplicate rows
+      distinct()
     
-    # Save the computation details to the log
-    save_log(input, summary_results)
+    # Asynchronously save the computation details to the log
+    future({
+      save_log(input, summary_results)
+    })
     
-    
-    # Render the results table with the Time column
+    # Render the results table
     output$results <- renderTable({
       summary_results
     })
@@ -125,6 +132,6 @@ server <- shinyServer(function(input, output) {
              y = "Number of Technicians") +
         theme_minimal()
     })
-    
   })
 })
+
