@@ -2,7 +2,7 @@ library(shiny)
 library(shinyWidgets)
 library(shinydashboard)
 
-shinyUI(fluidPage(
+ui <- shinyUI(fluidPage(
   
   # Add custom CSS for styling
   tags$head(
