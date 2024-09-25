@@ -2,7 +2,41 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
-source("src/BayProdCal.R")  # Load your production calculation functions
+library(httr)
+library(jsonlite)
+
+source("BayProdCal.R")  # Load your production calculation functions
+
+# Function to upload file to GitHub via API
+upload_to_github <- function(file_path, repo, branch, token, message = "Update simulation log") {
+  url <- paste0("https://github.com/SaviKoissi/ProdCal", repo, "/contents/", file_path)
+  
+  # Read the file content and encode it in base64
+  content <- base64enc::base64encode(file_path)
+  
+  # Prepare the body for the API request
+  body <- list(
+    message = message,
+    content = content,
+    branch = branch
+  )
+  
+  # Send the PUT request to GitHub API
+  res <- PUT(
+    url,
+    add_headers(Authorization = paste("token", token)),
+    body = toJSON(body, auto_unbox = TRUE),
+    encode = "json"
+  )
+  
+  # Check for successful upload
+  if (res$status_code == 201) {
+    print("File successfully uploaded to GitHub!")
+  } else {
+    print(paste("Failed to upload file:", res$status_code))
+  }
+}
+
 
 # Function to save log entries to CSV
 
@@ -27,6 +61,10 @@ save_log <- function(inputs, summary_results) {
   }
 }
 
+# Upload the CSV file to GitHub
+github_token <- "JpEr/9qugl/jJBCul6pgsHa/6//pmBRu12vL5tSEXUA merveillekoissi.savi@gmail.com"  
+github_repo <- "SaviKoissi/ProdCal" 
+github_branch <- "main"  
 server <- shinyServer(function(input, output) {
   
   observeEvent(input$calculate, {
