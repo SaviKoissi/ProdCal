@@ -5,7 +5,7 @@ library(dplyr)
 library(httr)
 library(jsonlite)
 
-source("BayProdCal.R")  # Load your production calculation functions
+source("src/BayProdCal.R")  # Load your production calculation functions
 
 # Function to upload file to GitHub via API
 upload_to_github <- function(file_path, repo, branch, token, message = "Update simulation log") {
