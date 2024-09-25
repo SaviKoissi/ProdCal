@@ -2,7 +2,30 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
-source("src/BayProdCal.R")  # Load your production calculation functions
+source("BayProdCal.R")  # Load your production calculation functions
+
+# Function to save log entries to CSV
+
+save_log <- function(inputs, summary_results) {
+  log_entry <- data.frame(
+    timestamp = Sys.time(),
+    crop_name = inputs$crop_name,
+    initial_material = inputs$initial_material,
+    n_cycles = inputs$n_cycles,
+    n_simulations = inputs$n_simulations,
+    gamma = inputs$gamma,
+    alpha = inputs$alpha,
+    summary_results = paste(capture.output(print(summary_results)), collapse = "\n"), # Save summary results as text
+    stringsAsFactors = FALSE
+  )
+  
+  # Append to CSV
+  if (!file.exists("sim_log.csv")) {
+    write.csv(log_entry, "sim_log.csv", row.names = FALSE)
+  } else {
+    write.table(log_entry, "sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+  }
+}
 
 shinyServer(function(input, output) {
   
@@ -29,6 +52,10 @@ shinyServer(function(input, output) {
         time_T = 6 + cycle * 2 + 2
       ) %>%
       distinct()  # Remove any duplicate rows
+    
+    # Save the computation details to the log
+    save_log(input, summary_results)
+    
     
     # Render the results table with the Time column
     output$results <- renderTable({
