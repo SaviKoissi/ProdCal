@@ -1,5 +1,6 @@
 library(shiny)
 library(shinyWidgets)
+library(shinydashboard)
 
 shinyUI(fluidPage(
   
@@ -28,9 +29,11 @@ shinyUI(fluidPage(
       img(src = "logo.png", alt = "Logo", style="float:right"),  # Relative path to the logo
       titlePanel("Crop Production Simulation Tool")  # Updated app name
   ),
-  #setBackgroundImage(
-   # src = "https://jgi.doe.gov/wp-content/uploads/2016/04/w1-IMG_7757_Prochnik.jpg"
- # ),
+  
+  dashboardBody(
+   tags$img(src = "https://jgi.doe.gov/wp-content/uploads/2016/04/w1-IMG_7757_Prochnik.jpg",
+            style = 'position: absolute; opacity: 0.2;')
+ ),
   
   
   hr(style = "border-top: 1px solid #000000;"),
