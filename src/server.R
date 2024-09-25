@@ -27,7 +27,7 @@ save_log <- function(inputs, summary_results) {
   }
 }
 
-shinyServer(function(input, output) {
+server <- shinyServer(function(input, output) {
   
   observeEvent(input$calculate, {
     
