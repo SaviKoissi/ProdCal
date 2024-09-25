@@ -2,7 +2,7 @@
 library(shiny)
 library(ggplot2)
 library(dplyr)
-source("BayProdCal.R")  # Load your production calculation functions
+source("src/BayProdCal.R")  # Load your production calculation functions
 
 # Function to save log entries to CSV
 
@@ -21,7 +21,7 @@ save_log <- function(inputs, summary_results) {
   
   # Append to CSV
   if (!file.exists("sim_log.csv")) {
-    write.csv(log_entry, "sim_log.csv", row.names = FALSE)
+    write.csv(log_entry, "src/sim_log.csv", row.names = FALSE)
   } else {
     write.table(log_entry, "sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
   }
