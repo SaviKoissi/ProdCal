@@ -52,8 +52,16 @@ upload_to_github <- function(file_path, repo, branch, token, message = "Update s
   }
 }
 
-# Function to save log entries to CSV
 save_log <- function(inputs, summary_results) {
+  # Ensure the src/ directory exists
+  if (!dir.exists("src")) {
+    dir.create("src")
+  }
+  
+  # Define the log file path
+  log_file_path <- "src/sim_log.csv"
+  
+  # Create a new log entry
   log_entry <- data.frame(
     timestamp = Sys.time(),
     crop_name = inputs$crop_name,
@@ -66,8 +74,7 @@ save_log <- function(inputs, summary_results) {
     stringsAsFactors = FALSE
   )
   
-  # Append to CSV
-  log_file_path <- "src/sim_log.csv"
+  # Check if the CSV file exists; if not, create it with headers
   if (!file.exists(log_file_path)) {
     write.csv(log_entry, log_file_path, row.names = FALSE)
   } else {
@@ -75,12 +82,6 @@ save_log <- function(inputs, summary_results) {
   }
 }
 
-# Upload the CSV file to GitHub asynchronously
-upload_to_github_async <- function(file_path, repo, branch, token) {
-  future({
-    upload_to_github(file_path, repo, branch, token)
-  })
-}
 
 # Retrieve the GitHub token from an environment variable
 github_token <- Sys.getenv("ShinyAppToken")
