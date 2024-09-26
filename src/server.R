@@ -6,6 +6,7 @@ library(httr)
 library(jsonlite)
 library(promises)    # Added for async operations
 library(future)      # Added for async operations
+library(base64enc)   # For base64 encoding
 
 plan(multisession)   # Set up asynchronous processing
 
@@ -13,22 +14,32 @@ source("src/BayProdCal.R")  # Load your production calculation functions
 
 # Function to upload file to GitHub via API
 upload_to_github <- function(file_path, repo, branch, token, message = "Update simulation log") {
-  url <- paste0("https://github.com/SaviKoissi/ProdCal", repo, "/contents/", file_path)
+  # Prepare the URL for GitHub API
+  url <- paste0("https://api.github.com/repos/", repo, "/contents/", file_path)
   
   # Read the file content and encode it in base64
-  content <- base64enc::base64encode(file_path)
+  file_content <- readBin(file_path, "raw", file.info(file_path)$size)
+  content <- base64encode(file_content)
+  
+  # Get the current file's SHA (required for updating an existing file)
+  res_get <- GET(
+    url,
+    add_headers(Authorization = paste("token", token))
+  )
+  sha <- ifelse(res_get$status_code == 200, content(res_get)$sha, NULL)
   
   # Prepare the body for the API request
   body <- list(
     message = message,
     content = content,
-    branch = branch
+    branch = branch,
+    sha = sha
   )
   
   # Send the PUT request to GitHub API
   res <- PUT(
     url,
-    add_headers(Authorization = paste(Sys.getenv("ShinyAppToken"), token)),
+    add_headers(Authorization = paste("token", token)),
     body = toJSON(body, auto_unbox = TRUE),
     encode = "json"
   )
@@ -37,7 +48,7 @@ upload_to_github <- function(file_path, repo, branch, token, message = "Update s
   if (res$status_code == 201) {
     print("File successfully uploaded to GitHub!")
   } else {
-    print(paste("Failed to upload file:", res$status_code))
+    print(paste("Failed to upload file:", res$status_code, content(res)))
   }
 }
 
@@ -51,15 +62,16 @@ save_log <- function(inputs, summary_results) {
     n_simulations = inputs$n_simulations,
     gamma = inputs$gamma,
     alpha = inputs$alpha,
-    summary_results = paste(capture.output(print(summary_results)), collapse = "\n"), # Save summary results as text
+    summary_results = paste(capture.output(print(summary_results)), collapse = "\n"),
     stringsAsFactors = FALSE
   )
   
   # Append to CSV
-  if (!file.exists("src/sim_log.csv")) {
-    write.csv(log_entry, "src/sim_log.csv", row.names = FALSE)
+  log_file_path <- "src/sim_log.csv"
+  if (!file.exists(log_file_path)) {
+    write.csv(log_entry, log_file_path, row.names = FALSE)
   } else {
-    write.table(log_entry, "src/sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+    write.table(log_entry, log_file_path, row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
   }
 }
 
@@ -70,10 +82,12 @@ upload_to_github_async <- function(file_path, repo, branch, token) {
   })
 }
 
+# Retrieve the GitHub token from an environment variable
 github_token <- Sys.getenv("ShinyAppToken")
 github_repo <- "SaviKoissi/ProdCal"
 github_branch <- "main"
 
+# Shiny server logic
 server <- shinyServer(function(input, output) {
   
   observeEvent(input$calculate, {
@@ -88,7 +102,7 @@ server <- shinyServer(function(input, output) {
     # Summarize results by cycle
     summary_results <- results_df %>%
       group_by(cycle) %>%
-      reframe(
+      summarize(
         mean_explants = mean(explants_after_n),
         sd_explants = sd(explants_after_n),
         mean_bottles = mean(bottles_required),
@@ -96,8 +110,7 @@ server <- shinyServer(function(input, output) {
         mean_technicians = mean(technicians_needed),
         sd_technicians = sd(technicians_needed),
         time_T = 6 + cycle * 2 + 2
-      ) %>%
-      distinct()
+      )
     
     # Asynchronously save the computation details to the log
     future({
@@ -132,5 +145,8 @@ server <- shinyServer(function(input, output) {
              y = "Number of Technicians") +
         theme_minimal()
     })
+    
+    # Asynchronously upload the log to GitHub
+    upload_to_github_async("src/sim_log.csv", github_repo, github_branch, github_token)
   })
 })
