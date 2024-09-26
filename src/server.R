@@ -13,7 +13,7 @@ source("src/BayProdCal.R")  # Load your production calculation functions
 
 # Function to upload file to GitHub via API
 upload_to_github <- function(file_path, repo, branch, token, message = "Update simulation log") {
-  url <- paste0("https://github.com/SaviKoissi", repo, "/ProdCal", file_path)
+  url <- paste0("https://github.com/SaviKoissi/ProdCal", repo, "/contents/", file_path)
   
   # Read the file content and encode it in base64
   content <- base64enc::base64encode(file_path)
@@ -21,14 +21,14 @@ upload_to_github <- function(file_path, repo, branch, token, message = "Update s
   # Prepare the body for the API request
   body <- list(
     message = message,
-    content = ProdCal,
+    content = content,
     branch = branch
   )
   
   # Send the PUT request to GitHub API
   res <- PUT(
     url,
-    add_headers(Authorization = paste("ShinyAppToken", token)),
+    add_headers(Authorization = paste(Sys.getenv("ShinyAppToken"), token)),
     body = toJSON(body, auto_unbox = TRUE),
     encode = "json"
   )
@@ -70,7 +70,7 @@ upload_to_github_async <- function(file_path, repo, branch, token) {
   })
 }
 
-github_token <- "JpEr/9qugl/jJBCul6pgsHa/6//pmBRu12vL5tSEXUA merveillekoissi.savi@gmail.com"
+github_token <- Sys.getenv("ShinyAppToken")
 github_repo <- "SaviKoissi/ProdCal"
 github_branch <- "main"
 
