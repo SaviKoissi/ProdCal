@@ -11,7 +11,8 @@ install.packages(c("shiny", "shinyWidgets", "shinydashboard", "tidyverse"))
 Then load the library Shiny and execute the following command
 
 ```r
-library(shiny)
-runGitHub("ProdCal", "SaviKoissi")
+sink("/dev/null") 
+shiny::runGitHub("ProdCal", "SaviKoissi")
+sink() 
 ```
 
