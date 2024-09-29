@@ -27,14 +27,15 @@ save_log <- function(inputs, summary_results) {
     stringsAsFactors = FALSE
   )
 
-  log_file <- "src/sim_log.csv"
-  
-  # Append to CSV
-   if (!file.exists(log_file)) {
-    write.csv(log_entry, log_file, row.names = FALSE)
-  } else {
-    write.table(log_entry, log_file, row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
-  }
+  tryCatch({
+    if (!file.exists("src/sim_log.csv")) {
+      write.csv(log_entry, "src/sim_log.csv", row.names = FALSE)
+    } else {
+      write.table(log_entry, "src/sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+    }
+  }, error = function(e) {
+    cat("Error saving log file:", e$message, "\n")
+  })
 }
 
 
