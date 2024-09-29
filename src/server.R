@@ -28,7 +28,7 @@ save_log <- function(inputs, summary_results) {
   )
 
   # Define the full path for the log file
-  log_file_path <- file.path("src", "sim_log.csv")
+  log_file_path <- file.path("src/sim_log.csv")
   
   # Append to CSV
   if (!file.exists(log_file_path)) {
