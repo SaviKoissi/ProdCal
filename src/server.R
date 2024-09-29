@@ -14,26 +14,26 @@ source("src/BayProdCal.R")  # Load your production calculation functions
 
 
 # Function to save log entries to CSV
-save_log <- function(inputs, summary_results) {
-  log_entry <- data.frame(
-    timestamp = Sys.time(),
-    crop_name = inputs$crop_name,
-    initial_material = inputs$initial_material,
-    n_cycles = inputs$n_cycles,
-    n_simulations = inputs$n_simulations,
-    gamma = inputs$gamma,
-    alpha = inputs$alpha,
-    summary_results = paste(capture.output(print(summary_results)), collapse = "\n"), # Save summary results as text
-    stringsAsFactors = FALSE
-  )
+#save_log <- function(inputs, summary_results) {
+#  log_entry <- data.frame(
+ #   timestamp = Sys.time(),
+  #  crop_name = inputs$crop_name,
+   # initial_material = inputs$initial_material,
+    #n_cycles = inputs$n_cycles,
+    #n_simulations = inputs$n_simulations,
+    #gamma = inputs$gamma,
+    #alpha = inputs$alpha,
+    #summary_results = paste(capture.output(print(summary_results)), collapse = "\n"), # Save summary results as text
+    #stringsAsFactors = FALSE
+  #)
 
   # Append to CSV
-  if (!file.exists("src/sim_log.csv")) {
-    write.csv(log_entry, "src/sim_log.csv", row.names = FALSE)
-  } else {
-    write.table(log_entry, "src/sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
-  }
-}
+  #if (!file.exists("src/sim_log.csv")) {
+   # write.csv(log_entry, "src/sim_log.csv", row.names = FALSE)
+  #} else {
+   # write.table(log_entry, "src/sim_log.csv", row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+  #}
+#}
 
 
 
