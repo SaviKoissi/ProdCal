@@ -6,7 +6,6 @@ This application is built using Shiny and several other R packages, including to
 # Required packages
 install.packages(c("shiny", "shinyWidgets", "shinydashboard", "tidyverse"))
 
-# Alternatively, run the app and the necessary packages will be installed automatically.
 ```
 
 Then load the library Shiny and execute the following command
